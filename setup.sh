@@ -1,7 +1,15 @@
 #!/bin/sh -e
+mkdir -p ~/.Xilinx/Vivado
+mkdir -p ~/.config/Xilinx
+
 DRYRUN="${1}"
-UID="$(id -u)"
-GID="$(id -g)"
+HOST_UID="$(id -u)"
+HOST_GID="$(id -g)"
+
+export DISPLAY=${DISPLAY:-:0}
+export XAUTHORITY=${XAUTHORITY:-$HOME/.Xauthority}
+xhost +SI:localuser:$(id -un)
+
 USER="$(whoami)"
 
 die()
@@ -41,8 +49,8 @@ if [ -z "${CONTAINER}" ]; then
 	cd "$DOCKERDIR"
 	docker build \
 		--tag ${IMAGE}:${DATE} \
-		--build-arg UID=${UID} \
-		--build-arg GID=${GID} \
+		--build-arg UID=${HOST_UID} \
+		--build-arg GID=${HOST_GID} \
 		--build-arg USER=${USER} \
 		--build-arg XILINXMAIL=${XILINXMAIL} \
 		--build-arg XILINXLOGIN=${XILINXLOGIN} \
@@ -65,19 +73,27 @@ else
 		--rm \
 		--net host \
 		--name ${IMAGE} \
-		-u ${UID}:${GID} \
+		-u ${HOST_UID}:${HOST_GID} \
 		-it \
 		--privileged \
 		-e USER \
 		-e DISPLAY=$DISPLAY \
+		-e XAUTHORITY=/tmp/.Xauthority \
+		-e QT_X11_NO_MITSHM=1 \
+		-e QT_QPA_PLATFORM=xcb \
+		-e _JAVA_AWT_WM_NONREPARENTING=1 \
+		-e _JAVA_OPTIONS="-Dsun.java2d.xrender=false -Dsun.java2d.pmoffscreen=false -Dsun.java2d.opengl=false" \
+		-v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+		-v $XAUTHORITY:/tmp/.Xauthority:ro \
 		--env-file .env \
 		--group-add 20 \
 		--mount type=bind,source=./build_configs,target=/home/$USER/configs \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-v ~/.Xauthority:/home/${USER}/.Xauthority:ro \
 		-v ~/.gitconfig:/home/${USER}/.gitconfig:ro \
 		-v ~/.ssh:/home/${USER}/.ssh \
 		-v ./workspace:/home/${USER}/workspace \
+		-v ~/.Xilinx:/home/${USER}/.Xilinx \
+		-v ~/.config/Xilinx:/home/${USER}/.config/Xilinx \
+		-v /home/${USER}:/home/localhost \
 		${CONTAINER} \
 		${APP}
 
@@ -85,3 +101,4 @@ else
 fi
 
 echo "READY."
+
