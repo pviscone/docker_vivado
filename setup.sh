@@ -88,6 +88,7 @@ else
 		--env-file .env \
 		--group-add 20 \
 		--mount type=bind,source=./build_configs,target=/home/$USER/configs \
+		-v /dev/bus/usb:/dev/bus/usb \
 		-v ~/.gitconfig:/home/${USER}/.gitconfig:ro \
 		-v ~/.ssh:/home/${USER}/.ssh \
 		-v ./workspace:/home/${USER}/workspace \
