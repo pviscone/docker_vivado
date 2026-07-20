@@ -44,10 +44,11 @@ if [ -z "${CONTAINER}" ]; then
 
 	test -f ${TOPDIR}/${DOWNLOADDIR}/*_Unified_SDI_${VERSION}_*_Lin64.bin || die "No *_Unified_${VERSION}_*_Lin64.bin file provided in '${TOPDIR}/${DOWNLOADDIR}'"
 
-	mv ${TOPDIR}/${DOWNLOADDIR}/*_Unified_SDI_${VERSION}_*_Lin64.bin "${TOPDIR}/${DOCKERDIR}/build_context/"
+	cp ${TOPDIR}/${DOWNLOADDIR}/*_Unified_SDI_${VERSION}_*_Lin64.bin "${TOPDIR}/${DOCKERDIR}/build_context/"
 
 	cd "$DOCKERDIR"
 	docker build \
+		--network host \
 		--tag ${IMAGE}:${DATE} \
 		--build-arg UID=${HOST_UID} \
 		--build-arg GID=${HOST_GID} \
