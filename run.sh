@@ -28,12 +28,12 @@ DOWNLOADDIR="download"
 # These must match your Dockerfile ARG/requirements if you rebuild elsewhere.
 # Based on your docker images output:
 IMAGE_REPO="vivado-2023.2"
-IMAGE_TAG="202608182122"
+IMAGE_TAG="202608182204"
 IMAGE_REF="${IMAGE_REPO}:${IMAGE_TAG}"
 CONTAINER_ID="$(docker images -q "${IMAGE_REF}" | head -n 1 || true)"
 
 # If you want the build branch to also be hardcoded, set VERSION and the expected bin pattern.
-VERSION="202607201036"
+VERSION="2023.2"
 
 TOPDIR="$(pwd)"
 
