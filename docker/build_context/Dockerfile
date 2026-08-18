@@ -1,5 +1,5 @@
 ################################################################################
-FROM ubuntu:22.04 AS vivado-2025.2
+FROM ubuntu:22.04 AS vivado-2023.2
 MAINTAINER Lothar Rubusch <l.rubusch@gmail.com>
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -13,7 +13,7 @@ ARG XILINXLOGIN="${XILINXLOGIN}"
 ARG DISPLAY="${DISPLAY}"
 ENV MY_CONFIGS="/home/$USER/configs"
 ENV SCRIPTS="/home/$USER/scripts"
-ENV XILINXVERSION="2025.2"
+ENV XILINXVERSION="2023.2"
 
 ################################################################################
 ## set up apt fully functional
@@ -271,15 +271,16 @@ RUN ./FPGAs_AdaptiveSoCs_Unified_*_Lin64.bin --keep --noexec --target /usr/local
 RUN ./210_*.exp
 RUN ./220_*.exp "$XILINXMAIL" "$XILINXLOGIN"
 
+RUN echo "ASaa"
 COPY install_config.txt /home/$USER/.Xilinx/install_config.txt
-RUN /usr/local/xsetup --agree XilinxEULA,3rdPartyEULA --batch Install --config /home/$USER/.Xilinx/install_config.txt
+RUN /usr/local/xsetup --agree XilinxEULA,3rdPartyEULA --batch Install --config /home/$USER/.Xilinx/install_config.txt -x
 
 ## install libs
-WORKDIR /tools/Xilinx/$XILINXVERSION/Vitis/scripts
+WORKDIR /tools/Xilinx/Vitis/$XILINXVERSION/scripts
 RUN sudo ./installLibs.sh
 
 ## install JTAG driver
-WORKDIR /tools/Xilinx/2025.2/data/xicom/cable_drivers/lin64/install_script/install_drivers
+WORKDIR /tools/Xilinx/Vivado/$XILINXVERSION/data/xicom/cable_drivers/lin64/install_script/install_drivers
 RUN sudo ./install_drivers
 
 ################################################################################

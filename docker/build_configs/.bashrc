@@ -108,8 +108,10 @@ source "${EN_SYS_ENV}"
 
 ## xilinx environment
 test -f "/home/${USER}/workspace/settings.sh" && source "/home/${USER}/workspace/settings.sh"
-source "/tools/Xilinx/2025.2/Vivado/settings64.sh"
+source "/tools/Xilinx/Vivado/2023.2/settings64.sh"
 
 echo "setting environment"
 echo "PATH=${PATH}"
 echo
+
+export _JAVA_OPTIONS="-Dsun.java2d.uiScale.enabled=true -Dsun.java2d.win.uiScaleX=2.0 -Dsun.java2d.uiScale=2.0  $_JAVA_OPTIONS"
